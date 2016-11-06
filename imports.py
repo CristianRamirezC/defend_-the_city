@@ -29,46 +29,51 @@ class Menu:
     #def get_color(self):
     def draw_menu(self):
         pygame.display.set_caption("sisas")
-        if(self.intro):
-            pygame.mixer.music.load(self.filepath_s)
-            pygame.mixer.music.play(-1)
-            ls_2 = "Defend the city v1.0 "
-            ls_3 = "Computacion grafica UTP"
-            ls_4 = "Cristian Camilo Ramirez"
-            i=0
-            p=0
-            z=0
-            cad=''
-            cad2=''
-            cad3=''
-            segundo=False
-            tercero=False
-            while self.intro:
-                if(i < len(ls_2)):
-                    cad += ls_2[i]
-                else:
-                    segundo=True
-                if(segundo):
-                    if(p < len(ls_3)):
-                        cad2 += ls_3[p]
-                        p+=1
-                        tercero=True
+        pygame.display.set_icon(pygame.image.load("data/images/ico.png").convert_alpha())
+        while 1:
+            if(self.intro):
+                pygame.mixer.music.load(self.filepath_s)
+                pygame.mixer.music.play(-1)
+                ls_2 = "Defend the city v1.0 "
+                ls_3 = "Computacion grafica UTP"
+                ls_4 = "Cristian Camilo Ramirez"
+                i=0
+                p=0
+                z=0
+                cad=''
+                cad2=''
+                cad3=''
+                segundo=False
+                tercero=False
+                while self.intro:
+                    if(i < len(ls_2)):
+                        cad += ls_2[i]
                     else:
-                        self.dest_surface.blit(self.imagem, [0,120])
-                        if(tercero):
-                            if(z < len(ls_4)):
-                                cad3 += ls_4[z]
-                                z+=1
-                            else:
-                                pygame.time.delay(2000)
-                                pygame.mixer.music.stop()
-                                break
-                text = self.tipo1.render(cad , 1 , (random.randrange(100,255),0,0))
-                self.dest_surface.blit(text, (100,0))
-                text = self.tipo1.render(cad2 , 1 , (random.randrange(100,255),0,0))
-                self.dest_surface.blit(text, (30,60))
-                text = self.tipo2.render(cad3 , 1 , (random.randrange(100,255),0,0))
-                self.dest_surface.blit(text, (430,500))
-                pygame.display.flip()
-                i+=1
-                self.reloj.tick(2)
+                        segundo=True
+                    if(segundo):
+                        if(p < len(ls_3)):
+                            cad2 += ls_3[p]
+                            p+=1
+                            tercero=True
+                        else:
+                            self.dest_surface.blit(self.imagem, [0,120])
+                            if(tercero):
+                                if(z < len(ls_4)):
+                                    cad3 += ls_4[z]
+                                    z+=1
+                                else:
+                                    pygame.time.delay(2000)
+                                    pygame.mixer.music.stop()
+                                    self.intro=False
+                                    break
+                    text = self.tipo1.render(cad , 1 , (random.randrange(100,255),0,0))
+                    self.dest_surface.blit(text, (100,0))
+                    text = self.tipo1.render(cad2 , 1 , (random.randrange(100,255),0,0))
+                    self.dest_surface.blit(text, (30,60))
+                    text = self.tipo2.render(cad3 , 1 , (random.randrange(100,255),0,0))
+                    self.dest_surface.blit(text, (430,500))
+                    pygame.display.flip()
+                    i+=1
+                    self.reloj.tick(2)
+            else:
+                break
