@@ -1,4 +1,4 @@
-    try:
+try:
     import pygame,sys,random,threading,time,ConfigParser
     from pygame.locals import *
 except (KeyboardInterrupt, SystemExit):
