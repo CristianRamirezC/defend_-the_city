@@ -193,25 +193,26 @@ class Enemigo(pygame.sprite.Sprite):
     image_abajo =  []
     image_derecha = []
     image_izquierda=[]
-    def __init__(self, x,y, sp1,sp2):
+    def __init__(self, x,y, sp1,sp2, y1):
         pygame.sprite.Sprite.__init__(self)
         self.sp1=sp1
         self.sp2=sp2
         matrizimg = cargar_fondo("data/images/ZombieSheet.png", 32,32)
         for i in range(self.sp1,self.sp2):
-            self.image_abajo.append(matrizimg[i][0])
+            self.image_abajo.append(matrizimg[i][y1])
         for i in range(self.sp1,self.sp2):
-            self.image_izquierda.append(matrizimg[i][1])
+            self.image_izquierda.append(matrizimg[i][y1+1])
         for i in range(self.sp1,self.sp2):
-            self.image_derecha.append(matrizimg[i][2])
+            self.image_derecha.append(matrizimg[i][y1+2])
         for i in range(self.sp1,self.sp2):
-            self.image_arriba.append(matrizimg[i][3])
+            self.image_arriba.append(matrizimg[i][y1+3])
 
         self.image = self.image_izquierda[0]
         self.rect = self.image.get_rect()
         self.rect.x=x
         self.rect.y=y
         self.vida=100
+        self.velocidad=200
         self.control_velocidad = 0
         self.i = self.sp1
 
@@ -228,7 +229,7 @@ class Enemigo(pygame.sprite.Sprite):
                 self.i=self.sp1
 
         else:
-            if(self.control_velocidad > 200):
+            if(self.control_velocidad > self.velocidad):
                 self.control_velocidad=0
             else:
                 self.control_velocidad+=1
@@ -260,11 +261,16 @@ class Juego:
         for i in xrange(15):
             ls_valid_en.append(40*i)
 
-        for zombie in range(1):
-            en=Enemigo(ANCHO, ls_valid_en[random.randrange(14)], 0,3)
+        tipos = [(0,3,0),(3,6,0), (6,9,0)]
+        velocidad =[200, 180, 400]
+        vida= [100, 130, 400]
+
+        for zombie in range(zombies):
+            index=random.randrange(0,len(tipos))
+            en=Enemigo(ANCHO, ls_valid_en[random.randrange(14)], tipos[index][0],tipos[index][1],tipos[index][2])
+            en.vida=vida[index]
+            en.velocidad=velocidad[index]
             ls_enemigos.add(en)
-        en=Enemigo(500, ls_valid_en[random.randrange(14)], 3,6)
-        ls_enemigos.add(en)
         return ls_enemigos
 
 
