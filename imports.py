@@ -251,6 +251,7 @@ class Soldado1(pygame.sprite.Sprite):
         self.activado=False
         self.image=matrizimg[0][2]
         self.click=False
+        self.bloqueo=False
         self.rect = self.image.get_rect()
         self.rect.x=x
         self.rect.y=y
@@ -270,9 +271,10 @@ class Soldado1(pygame.sprite.Sprite):
         for e in ls_enemigos:
             if(checkCollision(self,e)):
                 e.rect.left = self.rect.right-1
+                #e.rect.x += 1
                 if(self.control_vida == 0):
                     self.control_vida+=1
-                    self.vida -= 10
+                    self.vida -= 5
                 else:
                     if(self.control_vida > 500):
                         self.control_vida=0
@@ -322,7 +324,7 @@ class Juego:
         pantalla = pygame.display.set_mode((ANCHO, ALTO+50))
         pygame.display.set_caption('%s  %.2f' % ("Defend the city - LVL 1       FPS:", reloj.get_fps()), 'Spine Runtime')
         pygame.display.set_icon(pygame.image.load("data/images/ico.png").convert_alpha())
-        pantalla.fill((0,0,0))
+        pantalla.fill((255,0,0))
         sub = pantalla.subsurface([0,ALTO, ANCHO, 50]) #Dibuja una surface sobre la pantalla
         tipo = pygame.font.SysFont("monospace", 15)
         tipo.set_bold(True)
@@ -361,16 +363,23 @@ class Juego:
                 for bloque in ls_arrastrable:
                     if bloque.rect.collidepoint(event.pos):
                         bloque.updatex(pantalla)
-                        bloque.click = True
+                        if(not bloque.bloqueo):
+                            bloque.click = True
             else:
                 for bloque in ls_arrastrable:
                     bloque.updatex(pantalla)
-                    bloque.click = False
+                    if(bloque.click):
+                        bloque.click = False
+                        bloque.bloqueo = True
 
             for ele in ls_arrastrable:
                 if(ele.vida < 0):
                     ls_arrastrable.remove(ele)
-            pantalla.fill((0,0,0))
+
+            for bloque in ls_arrastrable:
+                if(bloque.click):
+                    bloque.updatex(pantalla)
+            pantalla.fill((255,0,0))
             sub.fill((255,255,255))
             ls_enemigos.update()
             ls_arrastrable.update()
