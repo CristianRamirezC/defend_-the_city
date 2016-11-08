@@ -234,6 +234,7 @@ class Enemigo(pygame.sprite.Sprite):
             else:
                 self.control_velocidad+=1
 
+
 class Boton(pygame.sprite.Sprite):
 	def __init__(self,archivo,xi,yi,nombre):
 		pygame.sprite.Sprite.__init__(self)
@@ -242,6 +243,44 @@ class Boton(pygame.sprite.Sprite):
 		self.nombre = nombre
 		self.rect.x = xi
 		self.rect.y = yi
+
+class Soldado1(pygame.sprite.Sprite):
+    def __init__(self, x,y):
+        pygame.sprite.Sprite.__init__(self)
+        matrizimg = cargar_fondo("data/images/soldados.png", 30,32)
+        self.activado=False
+        self.image=matrizimg[0][2]
+        self.click=False
+        self.rect = self.image.get_rect()
+        self.rect.x=x
+        self.rect.y=y
+        self.vida = 50
+        self.control_vida = 0
+
+    def update_rect(self,x,y):
+        self.rect = self.image.get_rect()
+        self.rect.x= x
+        self.rect.y= y
+    def updatex(self,surface):
+		if self.click :
+			self.rect.center = pygame.mouse.get_pos()
+		surface.blit(self.image,self.rect)
+
+    def update(self):
+        for e in ls_enemigos:
+            if(checkCollision(self,e)):
+                e.rect.left = self.rect.right-1
+                if(self.control_vida == 0):
+                    self.control_vida+=1
+                    self.vida -= 10
+                else:
+                    if(self.control_vida > 500):
+                        self.control_vida=0
+                    else:
+                        self.control_vida+=1
+
+
+
 
 class Juego:
     nivel=1
@@ -275,19 +314,19 @@ class Juego:
 
 
     def nivel_1(self):
-        global ls_todos, ls_valid, ANCHO, ALTO
+        global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable
         ALTO = 600
         ANCHO = 800
         pygame.init()
         reloj = pygame.time.Clock()
-        pantalla = pygame.display.set_mode((ANCHO, ALTO+30))
+        pantalla = pygame.display.set_mode((ANCHO, ALTO+50))
         pygame.display.set_caption('%s  %.2f' % ("Defend the city - LVL 1       FPS:", reloj.get_fps()), 'Spine Runtime')
         pygame.display.set_icon(pygame.image.load("data/images/ico.png").convert_alpha())
         pantalla.fill((0,0,0))
-        sub = pantalla.subsurface([0,ALTO, ANCHO, 30]) #Dibuja una surface sobre la pantalla
+        sub = pantalla.subsurface([0,ALTO, ANCHO, 50]) #Dibuja una surface sobre la pantalla
         tipo = pygame.font.SysFont("monospace", 15)
         tipo.set_bold(True)
-        sub.fill((0,0,0))
+        sub.fill((255,255,255))
 
         ls_valid = []
 
@@ -297,10 +336,11 @@ class Juego:
 
         m = dibujarmapa("mapa.404","nivel1", 40,40)
 
-        m = Elemento(100,ALTO+20,'data/images/terreno.png')
-        m.image=images[0][2]
-        m.update_rect(m.rect.x,m.rect.y)
-        ls_arrastrable.add(m)
+        for i in xrange(20):
+            m = Soldado1(40*i,ALTO)
+            #m.update_rect(m.rect.x,m.rect.y)
+            ls_arrastrable.add(m)
+
         ls_enemigos = self.waves(10, 1, ls_enemigos)
 
         """pos = ls_valid_en[14]
@@ -320,17 +360,20 @@ class Juego:
             if(P[0] == 1):
                 for bloque in ls_arrastrable:
                     if bloque.rect.collidepoint(event.pos):
-                        bloque.update(pantalla)
+                        bloque.updatex(pantalla)
                         bloque.click = True
             else:
                 for bloque in ls_arrastrable:
-                    bloque.update(pantalla)
+                    bloque.updatex(pantalla)
                     bloque.click = False
 
-
-
+            for ele in ls_arrastrable:
+                if(ele.vida < 0):
+                    ls_arrastrable.remove(ele)
             pantalla.fill((0,0,0))
+            sub.fill((255,255,255))
             ls_enemigos.update()
+            ls_arrastrable.update()
             ls_todos.draw(pantalla)
             ls_arrastrable.draw(pantalla)
             ls_enemigos.draw(pantalla)
