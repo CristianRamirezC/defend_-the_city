@@ -195,15 +195,16 @@ class Enemigo(pygame.sprite.Sprite):
     image_izquierda=[]
     def __init__(self, x,y, sp1,sp2):
         pygame.sprite.Sprite.__init__(self)
-
+        self.sp1=sp1
+        self.sp2=sp2
         matrizimg = cargar_fondo("data/images/ZombieSheet.png", 32,32)
-        for i in range(sp1,sp2):
+        for i in range(self.sp1,self.sp2):
             self.image_abajo.append(matrizimg[i][0])
-        for i in range(sp1,sp2):
+        for i in range(self.sp1,self.sp2):
             self.image_izquierda.append(matrizimg[i][1])
-        for i in range(sp1,sp2):
+        for i in range(self.sp1,self.sp2):
             self.image_derecha.append(matrizimg[i][2])
-        for i in range(sp1,sp2):
+        for i in range(self.sp1,self.sp2):
             self.image_arriba.append(matrizimg[i][3])
 
         self.image = self.image_izquierda[0]
@@ -212,18 +213,19 @@ class Enemigo(pygame.sprite.Sprite):
         self.rect.y=y
         self.vida=100
         self.control_velocidad = 0
-        self.i = 0
+        self.i = self.sp1
 
     def update(self):
         if(self.control_velocidad == 0):
             self.control_velocidad+=1
             if(self.rect.x > 0):
                 self.rect.x -= 2
-            if(self.i < len(self.image_izquierda)):
+            if(self.i < self.sp2):
+                #print len(self.image_izquierda)
                 self.image = self.image_izquierda[self.i]
                 self.i+=1
             else:
-                self.i=0
+                self.i=self.sp1
 
         else:
             if(self.control_velocidad > 200):
@@ -258,9 +260,11 @@ class Juego:
         for i in xrange(15):
             ls_valid_en.append(40*i)
 
-        for zombie in range(zombies):
+        for zombie in range(1):
             en=Enemigo(ANCHO, ls_valid_en[random.randrange(14)], 0,3)
             ls_enemigos.add(en)
+        en=Enemigo(500, ls_valid_en[random.randrange(14)], 3,6)
+        ls_enemigos.add(en)
         return ls_enemigos
 
 
