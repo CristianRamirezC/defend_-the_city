@@ -16,6 +16,7 @@ class Elemento(pygame.sprite.Sprite):
         self.rect.y = y
         self.rect.x = x
         self.tipo = "ninguno"
+        self.bloqueo = "no"
         self.actualizable = "no"
 
     def update_rect(self,x,y):
@@ -118,3 +119,137 @@ class Menu:
                     y+=70
                 pygame.display.flip()
                 break
+
+def checkCollision(sprite1, sprite2):
+    col = pygame.sprite.collide_rect(sprite1, sprite2)
+    if col == True:
+        return True
+    else:
+        return False
+
+def cargar_fondo(archivo, ancho, alto):
+    imagen = pygame.image.load(archivo).convert_alpha()
+    imagen_ancho, imagen_alto = imagen.get_size()
+    tabla_fondos = []
+    for fondo_x in range(0, imagen_ancho/ancho):
+       linea = []
+       tabla_fondos.append(linea)
+       for fondo_y in range(0, imagen_alto/alto):
+            cuadro = (fondo_x * ancho, fondo_y * alto, ancho, alto)
+            linea.append(imagen.subsurface(cuadro))
+    return tabla_fondos
+
+def dibujarmapa(archivo,seccion,vxi,vyi):
+    global images
+    interprete = ConfigParser.ConfigParser()
+    interprete.read(archivo)
+    try:
+        imagen = interprete.get(seccion, "origen")
+        mapa = interprete.get(seccion, "mapa").split("\n")
+        images = cargar_fondo(imagen, vxi,vyi)
+    except:
+        print("Error en la lectura de la seccion")
+        sys.exit(0)
+    try:
+        for ey, punto in enumerate(mapa):
+            for ex,cd in enumerate(punto):
+                ls_valid.append((ex*vxi,ey*vyi))
+                if((interprete.get(cd, "nombre") == "cesped_claro")):
+                    vx = interprete.get(cd, "vx")
+                    vy = interprete.get(cd, "vy")
+                    m = Elemento(ex*vxi,ey*vyi,imagen)
+                    m.image=images[int(vx)][int(vy)]
+                    m.tipo=interprete.get(cd, "nombre")
+                    m.bloqueo=interprete.get(cd, "muro")
+                    m.actualizable=interprete.get(cd, "actualizable")
+                    m.update_rect(ex*vxi,ey*vyi)
+
+                    ls_todos.add(m)
+
+                if((interprete.get(cd, "nombre") == "cesped_oscuro")):
+                    vx = interprete.get(cd, "vx")
+                    vy = interprete.get(cd, "vy")
+                    m = Elemento(ex*vxi,ey*vyi,imagen)
+                    m.image=images[int(vx)][int(vy)]
+                    m.tipo=interprete.get(cd, "nombre")
+                    m.bloqueo=interprete.get(cd, "muro")
+                    m.actualizable=interprete.get(cd, "actualizable")
+                    m.update_rect(ex*vxi,ey*vyi)
+
+                    ls_todos.add(m)
+
+    except:
+        print("Archivo de configuracion corrupto reinstale el juego o contacte al soporte")
+        sys.exit(0)
+
+
+class Enemigo(pygame.sprite.Sprite):
+    image_arriba = []
+    image_abajo =  []
+    image_derecha = []
+    image_izquierda=[]
+    def __init__(self, x,y, sp1,sp2):
+        pygame.sprite.Sprite.__init__(self)
+
+        matrizimg = cargar_fondo("data/images/ZombieSheet.png", 21,21)
+        for i in range(sp1,sp2):
+            self.image_abajo.append(matrizimg[i][0])
+        for i in range(sp1,sp2):
+            self.image_izquierda.append(matrizimg[i][1])
+        for i in range(sp1,sp2):
+            self.image_derecha.append(matrizimg[i][2])
+        for i in range(sp1,sp2):
+            self.image_arriba.append(matrizimg[i][3])
+
+        self.image = self.image_derecha[0]
+        self.rect = self.image.get_rect()
+        self.rect.x=x
+        self.rect.y=y
+        self.vida=100
+
+class Boton(pygame.sprite.Sprite):
+	def __init__(self,archivo,xi,yi,nombre):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.image.load(archivo).convert_alpha()
+		self.rect = self.image.get_rect()
+		self.nombre = nombre
+		self.rect.x = xi
+		self.rect.y = yi
+
+class Juego:
+    nivel=1
+    surface=None
+
+    def __init__(self,nivel,surface):
+        self.nivel = nivel
+        self.surface = surface
+
+
+    def gestor(self):
+        if(self.nivel==1):
+            self.nivel_1()
+
+
+    def nivel_1(self):
+        global ls_todos, ls_valid
+        ALTO = 600
+        ANCHO = 800
+        pygame.init()
+        reloj = pygame.time.Clock()
+        pantalla = pygame.display.set_mode((ANCHO, ALTO+30))
+        pygame.display.set_caption('%s  %.2f' % ("Defend the city - LVL 1       FPS:", reloj.get_fps()), 'Spine Runtime')
+        pygame.display.set_icon(pygame.image.load("data/images/ico.png").convert_alpha())
+        pantalla.fill((0,0,0))
+        sub = pantalla.subsurface([0,ALTO, ANCHO, 30]) #Dibuja una surface sobre la pantalla
+        tipo = pygame.font.SysFont("monospace", 15)
+        tipo.set_bold(True)
+        sub.fill((0,0,0))
+
+        ls_valid = []
+        ls_todos=pygame.sprite.Group()
+        m = dibujarmapa("mapa.404","nivel1", 40,40)
+        print ls_valid
+        ls_todos.draw(self.surface)
+        pygame.display.flip()
+        while 1:
+            next
