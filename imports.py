@@ -293,8 +293,14 @@ class Juego:
 
         ls_todos=pygame.sprite.Group()
         ls_enemigos=pygame.sprite.Group()
+        ls_arrastrable=pygame.sprite.Group()
+
         m = dibujarmapa("mapa.404","nivel1", 40,40)
 
+        m = Elemento(100,ALTO+20,'data/images/terreno.png')
+        m.image=images[0][2]
+        m.update_rect(m.rect.x,m.rect.y)
+        ls_arrastrable.add(m)
         ls_enemigos = self.waves(10, 1, ls_enemigos)
 
         """pos = ls_valid_en[14]
@@ -310,21 +316,22 @@ class Juego:
                     if event.key == pygame.K_ESCAPE:
                         sys.exit(0)
 
-            """P=pygame.mouse.get_pressed()
+            P=pygame.mouse.get_pressed()
             if(P[0] == 1):
-                for bloque in ls_todos:
+                for bloque in ls_arrastrable:
                     if bloque.rect.collidepoint(event.pos):
                         bloque.update(pantalla)
                         bloque.click = True
             else:
-                for bloque in ls_todos:
+                for bloque in ls_arrastrable:
                     bloque.update(pantalla)
-                    bloque.click = False"""
+                    bloque.click = False
 
 
 
             pantalla.fill((0,0,0))
             ls_enemigos.update()
             ls_todos.draw(pantalla)
+            ls_arrastrable.draw(pantalla)
             ls_enemigos.draw(pantalla)
             pygame.display.flip()
