@@ -13,8 +13,9 @@ def start():
     pantalla.fill((51,51,51))
     m =Menu(['Iniciar juego','Controles', 'Salir'], pantalla, (ANCHO/2-150,ALTO/2-50))
     m.tam_font = 68
+    m.intro=False
     m.draw_menu()
-
+    game = Juego(1,pantalla)
     pygame.display.update()
     while 1:
         for event in pygame.event.get():
@@ -38,7 +39,7 @@ def start():
                     if m.cursor == 2:
                         sys.exit(0)
                     if m.cursor == 0:
-                        print("Juego")
+                        game.gestor()
                     if m.cursor == 1:
                         print("Menu help")
                 pantalla.fill((51,51,51))

@@ -18,11 +18,16 @@ class Elemento(pygame.sprite.Sprite):
         self.tipo = "ninguno"
         self.bloqueo = "no"
         self.actualizable = "no"
+        self.click = False
 
     def update_rect(self,x,y):
         self.rect = self.image.get_rect()
         self.rect.x= x
         self.rect.y= y
+    def update(self,surface):
+		if self.click :
+			self.rect.center = pygame.mouse.get_pos()
+		surface.blit(self.image,self.rect)
 
 class Menu:
     lista = []
@@ -191,7 +196,7 @@ class Enemigo(pygame.sprite.Sprite):
     def __init__(self, x,y, sp1,sp2):
         pygame.sprite.Sprite.__init__(self)
 
-        matrizimg = cargar_fondo("data/images/ZombieSheet.png", 21,21)
+        matrizimg = cargar_fondo("data/images/ZombieSheet.png", 32,32)
         for i in range(sp1,sp2):
             self.image_abajo.append(matrizimg[i][0])
         for i in range(sp1,sp2):
@@ -201,11 +206,30 @@ class Enemigo(pygame.sprite.Sprite):
         for i in range(sp1,sp2):
             self.image_arriba.append(matrizimg[i][3])
 
-        self.image = self.image_derecha[0]
+        self.image = self.image_izquierda[0]
         self.rect = self.image.get_rect()
         self.rect.x=x
         self.rect.y=y
         self.vida=100
+        self.control_velocidad = 0
+        self.i = 0
+
+    def update(self):
+        if(self.control_velocidad == 0):
+            self.control_velocidad+=1
+            if(self.rect.x > 0):
+                self.rect.x -= 2
+            if(self.i < len(self.image_izquierda)):
+                self.image = self.image_izquierda[self.i]
+                self.i+=1
+            else:
+                self.i=0
+
+        else:
+            if(self.control_velocidad > 200):
+                self.control_velocidad=0
+            else:
+                self.control_velocidad+=1
 
 class Boton(pygame.sprite.Sprite):
 	def __init__(self,archivo,xi,yi,nombre):
@@ -229,9 +253,19 @@ class Juego:
         if(self.nivel==1):
             self.nivel_1()
 
+    def waves(self, zombies, waves, ls_enemigos):
+        ls_valid_en = []
+        for i in xrange(15):
+            ls_valid_en.append(40*i)
+
+        for zombie in range(zombies):
+            en=Enemigo(ANCHO, ls_valid_en[random.randrange(14)], 0,3)
+            ls_enemigos.add(en)
+        return ls_enemigos
+
 
     def nivel_1(self):
-        global ls_todos, ls_valid
+        global ls_todos, ls_valid, ANCHO, ALTO
         ALTO = 600
         ANCHO = 800
         pygame.init()
@@ -246,10 +280,41 @@ class Juego:
         sub.fill((0,0,0))
 
         ls_valid = []
+
         ls_todos=pygame.sprite.Group()
+        ls_enemigos=pygame.sprite.Group()
         m = dibujarmapa("mapa.404","nivel1", 40,40)
-        print ls_valid
+
+        ls_enemigos = self.waves(10, 1, ls_enemigos)
+
+        """pos = ls_valid_en[14]
+        en = Enemigo(pos[0],pos[1], 0,2)
+        ls_enemigos.add(en)"""
+
         ls_todos.draw(self.surface)
         pygame.display.flip()
+        presionado = False
         while 1:
-            next
+            for event in pygame.event.get():
+                if event.type==pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        sys.exit(0)
+
+            """P=pygame.mouse.get_pressed()
+            if(P[0] == 1):
+                for bloque in ls_todos:
+                    if bloque.rect.collidepoint(event.pos):
+                        bloque.update(pantalla)
+                        bloque.click = True
+            else:
+                for bloque in ls_todos:
+                    bloque.update(pantalla)
+                    bloque.click = False"""
+
+
+
+            pantalla.fill((0,0,0))
+            ls_enemigos.update()
+            ls_todos.draw(pantalla)
+            ls_enemigos.draw(pantalla)
+            pygame.display.flip()
