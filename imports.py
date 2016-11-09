@@ -559,14 +559,19 @@ class Juego:
                         if(bloque.click and bloque.bloqueo == False):
                             bloque.updatex(pantalla)
                             if(bloque.click):
-                                if(dinero < bloque.precio):
-                                    self.texto("Necesitas mas dinero", "data/images/money.png")
+                                if(bloque.rect.y > ALTO-35):
+                                    self.texto("Posicion invalida", "data/images/war.png")
                                     ls_arrastrable.remove(bloque)
                                     bloque.click = False
                                 else:
-                                    bloque.click = False
-                                    bloque.bloqueo = True
-                                    dinero-=bloque.precio
+                                    if(dinero < bloque.precio):
+                                        self.texto("Necesitas mas dinero", "data/images/money.png")
+                                        ls_arrastrable.remove(bloque)
+                                        bloque.click = False
+                                    else:
+                                        bloque.click = False
+                                        bloque.bloqueo = True
+                                        dinero-=bloque.precio
                 if event.type==pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pantalla = pygame.display.set_mode((ANCHO, ALTO))
@@ -575,7 +580,7 @@ class Juego:
                     if event.key == pygame.K_p:
                         self.texto("Necesitas mas dinero", "data/images/money.png")
 
-            print "arr: ", ls_arrastrable, "soldado", ls_soldados
+            print "arr: ", ls_arrastrable, "soldado", ls_soldados, "enemigos: ", ls_enemigos
             if(cont_waves==0):
                 cont_waves+=1
                 ls_valid_en = []
@@ -593,7 +598,7 @@ class Juego:
                     en.velocidad=velocidad[index]
                     ls_enemigos.add(en)
             else:
-                if(cont_waves > 100000):
+                if(cont_waves > 15000):
                     cont_waves=0
                 else:
                     cont_waves+=1
