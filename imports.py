@@ -552,7 +552,9 @@ class Juego:
     def nivel_1(self):
         global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas, sub, pantalla, ls_animacion
         vidaf=100
-        self.dinero=1000
+        nro_oleadas=0
+        per_oleada=15
+        self.dinero=1100
         ALTO = 600
         ANCHO = 800
         pygame.init()
@@ -591,12 +593,13 @@ class Juego:
         presionado = False
         cont_waves=0
         muerto = False
+        win=False
         terminar=False
         while not terminar:
             if(vidaf <= 0):
                 tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 20)
                 global picture
-                picture = pygame.image.load("data/images/gameover.jpeg")
+                picture = pygame.image.load("data/images/gameover.png")
                 picture = pygame.transform.scale(picture, (ANCHO, ALTO+10))
                 rect = picture.get_rect()
                 muerto = True
@@ -651,28 +654,35 @@ class Juego:
                     if event.key == pygame.K_p:
                         self.texto("Necesitas mas dinero", "data/images/money.png")
 
-            print "arr: ", ls_arrastrable, "soldado", ls_soldados, "enemigos: ", ls_enemigos
-            if(cont_waves==0):
-                cont_waves+=1
-                ls_valid_en = []
-                for i in xrange(15):
-                    ls_valid_en.append(40*i)
-
-                tipos = [(0,3,0),(3,6,0), (6,9,0)]
-                velocidad =[100, 130, 400]
-                vida= [100, 130, 400]
-
-                for zombie in range(10):
-                    index=random.randrange(0,len(tipos))
-                    en=Enemigo(ANCHO, ls_valid_en[random.randrange(14)], tipos[index][0],tipos[index][1],tipos[index][2])
-                    en.vida=vida[index]
-                    en.velocidad=velocidad[index]
-                    ls_enemigos.add(en)
-            else:
-                if(cont_waves > 15000):
-                    cont_waves=0
-                else:
+            print "arr: ", ls_arrastrable, "soldado", ls_soldados, "enemigos: ", ls_enemigos, "nro_ol ", nro_oleadas
+            if(nro_oleadas <= 5):
+                if(cont_waves==0):
                     cont_waves+=1
+                    ls_valid_en = []
+                    for i in xrange(15):
+                        ls_valid_en.append(40*i)
+
+                    tipos = [(0,3,0),(3,6,0), (6,9,0)]
+                    velocidad =[2, 2, 2]
+                    vida= [100, 130, 400]
+
+                    for zombie in range(per_oleada):
+                        index=random.randrange(0,len(tipos))
+                        en=Enemigo(ANCHO, ls_valid_en[random.randrange(14)], tipos[index][0],tipos[index][1],tipos[index][2])
+                        en.vida=vida[index]
+                        en.velocidad=velocidad[index]
+                        ls_enemigos.add(en)
+                    nro_oleadas+=1
+                    per_oleada+=10
+                else:
+                    if(cont_waves > 15000):
+                        cont_waves=0
+                    else:
+                        cont_waves+=1
+            else:
+                win=True
+
+
 
             for e in ls_enemigos:
                 if(e.vida <= 0):
@@ -693,10 +703,9 @@ class Juego:
                 if(bloque.vida <= 0):
                     ls_arrastrable.remove(bloque)
 
-            if(not muerto):
+            if(not muerto and not win):
                 tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 10)
                 costos = tipo2.render("$50 $200 $150 $500" , 1 , (255,0,0))
-
                 pantalla.fill((255,0,0))
                 sub.fill((0,0,0))
                 sub.blit(costos,[0,41])
@@ -712,6 +721,11 @@ class Juego:
                 ls_enemigos.draw(pantalla)
                 ls_animacion.draw(pantalla)
             else:
-                pantalla.blit(picture, rect)
-                sub.blit(teclas1, [ANCHO/2-220,20])
+                if(muerto):
+                    ls_todos.draw(pantalla)
+                    pantalla.blit(picture, rect)
+                    sub.blit(teclas1, [ANCHO/2-220,20])
+                else:
+                    if(win):
+                        print "ganaste"
             pygame.display.flip()
