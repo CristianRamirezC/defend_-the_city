@@ -219,8 +219,7 @@ class Enemigo(pygame.sprite.Sprite):
     def update(self):
         if(self.control_velocidad == 0):
             self.control_velocidad+=1
-            if(self.rect.x > 0):
-                self.rect.x -= 2
+            self.rect.x -= 2
             if(self.i < self.sp2):
                 #print len(self.image_izquierda)
                 self.image = self.image_izquierda[self.i]
@@ -431,6 +430,7 @@ class Juego:
 
     def nivel_1(self):
         global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas
+        vidaf=100
         ALTO = 600
         ANCHO = 800
         pygame.init()
@@ -464,11 +464,26 @@ class Juego:
         pygame.display.flip()
         presionado = False
         cont_waves=0
-        while 1:
+        muerto = False
+        terminar=False
+        while not terminar:
+            if(vidaf <= 0):
+                tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 20)
+                global picture
+                picture = pygame.image.load("data/images/gameover.jpeg")
+                picture = pygame.transform.scale(picture, (ANCHO, ALTO+10))
+                rect = picture.get_rect()
+                muerto = True
+                sub.fill((0,0,0))
+                tipo.set_bold(True)
+                teclas1 = tipo2.render("Presione ESC para ir al menu" , 1 , (255,0,0))
+
             for event in pygame.event.get():
                 if event.type==pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        sys.exit(0)
+                        pantalla = pygame.display.set_mode((ANCHO, ALTO))
+                        terminar=True
+                        #sys.exit(0)
 
             P=pygame.mouse.get_pressed()
             if(P[0] == 1):
@@ -517,6 +532,9 @@ class Juego:
                         print en.vida
                         e.vida-=random.randrange(10,15)
                         ls_balas.remove(bulletx)
+                if(en.rect.x <= 0):
+                    vidaf-=30
+
 
             for bloque in ls_arrastrable:
                 if(bloque.click):
@@ -524,14 +542,17 @@ class Juego:
                 if(bloque.vida <= 0):
                     ls_arrastrable.remove(ele)
 
-
-            pantalla.fill((255,0,0))
-            sub.fill((255,255,255))
-            ls_enemigos.update()
-            ls_balas.update()
-            ls_arrastrable.update()
-            ls_todos.draw(pantalla)
-            ls_arrastrable.draw(pantalla)
-            ls_balas.draw(pantalla)
-            ls_enemigos.draw(pantalla)
+            if(not muerto):
+                pantalla.fill((255,0,0))
+                sub.fill((255,255,255))
+                ls_enemigos.update()
+                ls_balas.update()
+                ls_arrastrable.update()
+                ls_todos.draw(pantalla)
+                ls_arrastrable.draw(pantalla)
+                ls_balas.draw(pantalla)
+                ls_enemigos.draw(pantalla)
+            else:
+                pantalla.blit(picture, rect)
+                pantalla.blit(teclas1, [ANCHO/2-220,ALTO/2+300])
             pygame.display.flip()
