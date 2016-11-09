@@ -307,7 +307,7 @@ class Soldado1(pygame.sprite.Sprite):
         if(self.fire_rate==0):
             if(self.bloqueo and self.fire_rate==0):
                 self.fire_rate+=1
-                b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
+                b = Bullet("data/images/bala.png", self.rect.x+5, self.rect.y+10, "derecha")
                 ls_balas.add(b)
         else:
             if(self.fire_rate > 70):
@@ -358,7 +358,7 @@ class Soldado2(pygame.sprite.Sprite):
         if(self.fire_rate==0):
             if(self.bloqueo and self.fire_rate==0):
                 self.fire_rate+=1
-                b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
+                b = Bullet("data/images/bala.png",  self.rect.x+5, self.rect.y+10, "derecha")
                 ls_balas.add(b)
         else:
             if(self.fire_rate > 50):
@@ -409,7 +409,7 @@ class Soldado3(pygame.sprite.Sprite):
         if(self.fire_rate==0):
             if(self.bloqueo and self.fire_rate==0):
                 self.fire_rate+=1
-                b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
+                b = Bullet("data/images/bala.png",  self.rect.x+5, self.rect.y+10, "derecha")
                 ls_balas.add(b)
         else:
             if(self.fire_rate > 100):
@@ -559,7 +559,7 @@ class Juego:
         vidaf=100
         nro_oleadas=0
         per_oleada=20
-        self.dinero=1100
+        self.dinero=1100 #Cambia el dinero del juego
         ALTO = 600
         ANCHO = 800
         pygame.init()
@@ -684,7 +684,7 @@ class Juego:
                         ls_valid_en.append(40*i)
 
                     tipos = [(0,3,0),(3,6,0), (6,9,0)]
-                    velocidad =[10, 13, 40]
+                    velocidad =[10, 13, 40] #Cambia la velocidad de cada zombie
                     vida= [100, 130, 400]
 
                     for zombie in range(per_oleada):
@@ -696,7 +696,7 @@ class Juego:
                     nro_oleadas+=1
                     per_oleada+=10
                 else:
-                    if(cont_waves > 15000):
+                    if(cont_waves > 5000): #tiempo de las oleadas
                         cont_waves=0
                     else:
                         cont_waves+=1
