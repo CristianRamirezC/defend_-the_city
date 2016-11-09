@@ -310,7 +310,7 @@ class Soldado1(pygame.sprite.Sprite):
                 b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
                 ls_balas.add(b)
         else:
-            if(self.fire_rate > 700):
+            if(self.fire_rate > 70):
                 self.fire_rate=0
             else:
                 self.fire_rate+=1
@@ -361,7 +361,7 @@ class Soldado2(pygame.sprite.Sprite):
                 b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
                 ls_balas.add(b)
         else:
-            if(self.fire_rate > 500):
+            if(self.fire_rate > 50):
                 self.fire_rate=0
             else:
                 self.fire_rate+=1
@@ -412,7 +412,7 @@ class Soldado3(pygame.sprite.Sprite):
                 b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
                 ls_balas.add(b)
         else:
-            if(self.fire_rate > 1000):
+            if(self.fire_rate > 100):
                 self.fire_rate=0
             else:
                 self.fire_rate+=1
@@ -461,7 +461,7 @@ class lab(pygame.sprite.Sprite):
             self.game.dinero+=25
             ls_animacion.add(dinero_corr(self.rect.x+15,self.rect.y))
         else:
-            if(self.fire_rate > 5000):
+            if(self.fire_rate > 500):
                 self.fire_rate=0
             else:
                 self.fire_rate+=1
@@ -483,7 +483,7 @@ class dinero_corr(pygame.sprite.Sprite):
                 self.numero+=1
                 self.rect.y -= 5
             else:
-                if(self.time > 100):
+                if(self.time > 10):
                     self.time=0
                 else:
                     self.time+=1
@@ -683,7 +683,7 @@ class Juego:
                         ls_valid_en.append(40*i)
 
                     tipos = [(0,3,0),(3,6,0), (6,9,0)]
-                    velocidad =[100, 130, 400]
+                    velocidad =[10, 13, 40]
                     vida= [100, 130, 400]
 
                     for zombie in range(per_oleada):
