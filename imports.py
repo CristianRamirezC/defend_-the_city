@@ -536,6 +536,29 @@ class Juego:
                 teclas1 = tipo2.render("Presione ESC para ir al menu" , 1 , (255,0,0))
 
             for event in pygame.event.get():
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    for bloque in ls_arrastrable:
+                        if(not bloque.click):
+                            if bloque.rect.collidepoint(event.pos):
+                                if(not bloque.bloqueo):
+                                    bloque.updatex(pantalla)
+                                    bloque.click = True
+                                    self.update_status_section()
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    for bloque in ls_arrastrable:
+                        if(bloque.click):
+                            bloque.updatex(pantalla)
+                            if(bloque.click):
+                                if(dinero < bloque.precio):
+                                    self.texto("Necesitas mas dinero", "data/images/money.png")
+                                    ls_arrastrable.remove(bloque)
+                                    bloque.click = False
+                                else:
+                                    ls_soldados.add(bloque)
+                                    bloque.click = False
+                                    bloque.bloqueo = True
+                                    dinero-=bloque.precio
                 if event.type==pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pantalla = pygame.display.set_mode((ANCHO, ALTO))
@@ -544,24 +567,7 @@ class Juego:
                     if event.key == pygame.K_p:
                         self.texto("Necesitas mas dinero", "data/images/money.png")
 
-            P=pygame.mouse.get_pressed()
-            if(P[0] == 1):
-                for bloque in ls_arrastrable:
-                    if(not bloque.click):
-                        if bloque.rect.collidepoint(event.pos):
-                            if(not bloque.bloqueo):
-                                bloque.updatex(pantalla)
-                                bloque.click = True
-                                self.update_status_section()
-            else:
-                for bloque in ls_arrastrable:
-                    if(bloque.click):
-                        bloque.updatex(pantalla)
-                        if(bloque.click):
-                            ls_soldados.add(bloque)
-                            bloque.click = False
-                            bloque.bloqueo = True
-
+            print ls_arrastrable
             if(cont_waves==0):
                 cont_waves+=1
                 ls_valid_en = []
