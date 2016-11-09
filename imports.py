@@ -470,16 +470,18 @@ class Juego:
             P=pygame.mouse.get_pressed()
             if(P[0] == 1):
                 for bloque in ls_arrastrable:
-                    if bloque.rect.collidepoint(event.pos):
-                        bloque.updatex(pantalla)
-                        if(not bloque.bloqueo):
-                            bloque.click = True
+                    if(not bloque.click):
+                        if bloque.rect.collidepoint(event.pos):
+                            bloque.updatex(pantalla)
+                            if(not bloque.bloqueo):
+                                bloque.click = True
             else:
                 for bloque in ls_arrastrable:
-                    bloque.updatex(pantalla)
                     if(bloque.click):
-                        bloque.click = False
-                        bloque.bloqueo = True
+                        bloque.updatex(pantalla)
+                        if(bloque.click):
+                            bloque.click = False
+                            bloque.bloqueo = True
 
             if(cont_waves==0):
                 cont_waves+=1
@@ -488,7 +490,7 @@ class Juego:
                     ls_valid_en.append(40*i)
 
                 tipos = [(0,3,0),(3,6,0), (6,9,0)]
-                velocidad =[200, 180, 400]
+                velocidad =[10, 5, 20]
                 vida= [100, 130, 400]
 
                 for zombie in range(10):
@@ -502,21 +504,22 @@ class Juego:
                     cont_waves=0
                 else:
                     cont_waves+=1
-            print ls_enemigos
+
             for e in ls_enemigos:
                 if(e.vida <= 0):
                     ls_enemigos.remove(e)
+
                 for bulletx in ls_balas:
                     if(checkCollision(bulletx,e)):
-                        e.vida-=random.randrange(10,30)
-
-            for ele in ls_arrastrable:
-                if(ele.vida <= 0):
-                    ls_arrastrable.remove(ele)
+                        print en.vida
+                        e.vida-=2
+                        ls_balas.remove(bulletx)
 
             for bloque in ls_arrastrable:
                 if(bloque.click):
                     bloque.updatex(pantalla)
+                if(bloque.vida <= 0):
+                    ls_arrastrable.remove(ele)
 
             m = Soldado1(40*0,ALTO)
             ls_arrastrable.add(m)
