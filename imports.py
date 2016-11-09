@@ -427,6 +427,13 @@ class Juego:
         if(self.nivel==1):
             self.nivel_1()
 
+    def update_status_section(self):
+        m = Soldado1(40*0,ALTO)
+        ls_arrastrable.add(m)
+        m=Soldado2(40*1,ALTO)
+        ls_arrastrable.add(m)
+        m=Soldado3(40*2,ALTO)
+        ls_arrastrable.add(m)
 
     def nivel_1(self):
         global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas
@@ -439,7 +446,7 @@ class Juego:
         pygame.display.set_caption('%s  %.2f' % ("Defend the city - LVL 1       FPS:", reloj.get_fps()), 'Spine Runtime')
         pygame.display.set_icon(pygame.image.load("data/images/ico.png").convert_alpha())
         pantalla.fill((255,0,0))
-        sub = pantalla.subsurface([0,ALTO, ANCHO, 50]) #Dibuja una surface sobre la pantalla
+        sub = pantalla.subsurface([0,ALTO, ANCHO, 80]) #Dibuja una surface sobre la pantalla
         tipo = pygame.font.SysFont("monospace", 15)
         tipo.set_bold(True)
         sub.fill((255,255,255))
@@ -494,12 +501,7 @@ class Juego:
                             bloque.updatex(pantalla)
                             if(not bloque.bloqueo):
                                 bloque.click = True
-                                m = Soldado1(40*0,ALTO)
-                                ls_arrastrable.add(m)
-                                m=Soldado2(40*1,ALTO)
-                                ls_arrastrable.add(m)
-                                m=Soldado3(40*2,ALTO)
-                                ls_arrastrable.add(m)
+                                self.update_status_section()
             else:
                 for bloque in ls_arrastrable:
                     if(bloque.click):
@@ -551,8 +553,12 @@ class Juego:
                     ls_arrastrable.remove(ele)
 
             if(not muerto):
+                tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 10)
+                costos = tipo2.render("$50 $200 $150 " , 1 , (255,0,0))
+
                 pantalla.fill((255,0,0))
-                sub.fill((255,255,255))
+                sub.fill((0,0,0))
+                sub.blit(costos,[0,41])
                 ls_enemigos.update()
                 ls_balas.update()
                 ls_arrastrable.update()
