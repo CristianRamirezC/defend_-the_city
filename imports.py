@@ -235,7 +235,7 @@ class Enemigo(pygame.sprite.Sprite):
 
 
 class Boton(pygame.sprite.Sprite):
-	def __init__(self,archivo,xi,yi,nombre):
+	def __init__(self,archivo,x,y):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.image.load(archivo).convert_alpha()
 		self.rect = self.image.get_rect()
@@ -450,6 +450,7 @@ class Juego:
         ls_enemigos=pygame.sprite.Group()
         ls_arrastrable=pygame.sprite.Group()
         ls_balas = pygame.sprite.Group()
+        ls_soldados = pygame.sprite.Group()
 
         m = dibujarmapa("mapa.404","nivel1", 40,40)
 
@@ -493,6 +494,12 @@ class Juego:
                             bloque.updatex(pantalla)
                             if(not bloque.bloqueo):
                                 bloque.click = True
+                                m = Soldado1(40*0,ALTO)
+                                ls_arrastrable.add(m)
+                                m=Soldado2(40*1,ALTO)
+                                ls_arrastrable.add(m)
+                                m=Soldado3(40*2,ALTO)
+                                ls_arrastrable.add(m)
             else:
                 for bloque in ls_arrastrable:
                     if(bloque.click):
@@ -500,6 +507,7 @@ class Juego:
                         if(bloque.click):
                             bloque.click = False
                             bloque.bloqueo = True
+
 
             if(cont_waves==0):
                 cont_waves+=1
@@ -550,6 +558,7 @@ class Juego:
                 ls_arrastrable.update()
                 ls_todos.draw(pantalla)
                 ls_arrastrable.draw(pantalla)
+                ls_soldados.draw(pantalla)
                 ls_balas.draw(pantalla)
                 ls_enemigos.draw(pantalla)
             else:
