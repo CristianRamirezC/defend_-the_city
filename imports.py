@@ -417,7 +417,53 @@ class Soldado3(pygame.sprite.Sprite):
             else:
                 self.fire_rate+=1
 
+class lab(pygame.sprite.Sprite):
+    def __init__(self, x,y, game):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=pygame.image.load("data/images/fab.png").convert_alpha()
+        self.click=False
+        self.bloqueo=False
+        self.rect = self.image.get_rect()
+        self.rect.x=x
+        self.rect.y=y
+        self.vida = 400
+        self.fire_rate=1
+        self.control_vida = 0
+        self.tipo = "lab"
+        self.precio = 500
+        self.game = game
 
+    def update_rect(self,x,y):
+        self.rect = self.image.get_rect()
+        self.rect.x= x
+        self.rect.y= y
+    def updatex(self,surface):
+		if self.click :
+			self.rect.center = pygame.mouse.get_pos()
+		surface.blit(self.image,self.rect)
+
+    def update(self):
+        for e in ls_enemigos:
+            if(checkCollision(self,e)):
+                if(self.bloqueo):
+                    e.rect.left = self.rect.right-1
+                #e.rect.x += 1
+                if(self.control_vida == 0):
+                    self.control_vida+=1
+                    self.vida -= 5
+                else:
+                    if(self.control_vida > 500):
+                        self.control_vida=0
+                    else:
+                        self.control_vida+=1
+        if(self.fire_rate==0):
+            self.fire_rate+=1
+            self.game.dinero+=25
+        else:
+            if(self.fire_rate > 5000):
+                self.fire_rate=0
+            else:
+                self.fire_rate+=1
 
 
 class Juego:
@@ -427,19 +473,12 @@ class Juego:
     def __init__(self,nivel,surface):
         self.nivel = nivel
         self.surface = surface
+        self.dinero = 1000
 
 
     def gestor(self):
         if(self.nivel==1):
             self.nivel_1()
-
-    def update_status_section(self):
-        m = Soldado1(40*0,ALTO)
-        ls_arrastrable.add(m)
-        m=Soldado2(40*1,ALTO)
-        ls_arrastrable.add(m)
-        m=Soldado3(40*2,ALTO)
-        ls_arrastrable.add(m)
 
     def draw_vida(self, vida, dinero):
         heart_c = pygame.image.load("data/images/hud_heartFull.png").convert_alpha()
@@ -486,7 +525,7 @@ class Juego:
     def nivel_1(self):
         global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas, sub, pantalla
         vidaf=100
-        dinero=1000
+        self.dinero=1000
         ALTO = 600
         ANCHO = 800
         pygame.init()
@@ -515,6 +554,8 @@ class Juego:
         m=Soldado2(40*1,ALTO)
         ls_soldados.add(m)
         m=Soldado3(40*2,ALTO)
+        ls_soldados.add(m)
+        m=lab(40*3,ALTO, self)
         ls_soldados.add(m)
 
         ls_todos.draw(self.surface)
@@ -547,6 +588,8 @@ class Juego:
                                     m=Soldado2(40*1,ALTO)
                                 if(bloque.tipo == "soldado_3"):
                                     m=Soldado3(40*2,ALTO)
+                                if(bloque.tipo == "lab"):
+                                    m=lab(40*3,ALTO, self)
                                 if(not m.bloqueo) and (m.click == False):
                                     print "agarro"
                                     m.updatex(pantalla)
@@ -564,14 +607,14 @@ class Juego:
                                     ls_arrastrable.remove(bloque)
                                     bloque.click = False
                                 else:
-                                    if(dinero < bloque.precio):
+                                    if(self.dinero < bloque.precio):
                                         self.texto("Necesitas mas dinero", "data/images/money.png")
                                         ls_arrastrable.remove(bloque)
                                         bloque.click = False
                                     else:
                                         bloque.click = False
                                         bloque.bloqueo = True
-                                        dinero-=bloque.precio
+                                        self.dinero-=bloque.precio
                 if event.type==pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pantalla = pygame.display.set_mode((ANCHO, ALTO))
@@ -624,12 +667,12 @@ class Juego:
 
             if(not muerto):
                 tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 10)
-                costos = tipo2.render("$50 $200 $150 " , 1 , (255,0,0))
+                costos = tipo2.render("$50 $200 $150 $500" , 1 , (255,0,0))
 
                 pantalla.fill((255,0,0))
                 sub.fill((0,0,0))
                 sub.blit(costos,[0,41])
-                self.draw_vida(vidaf,dinero)
+                self.draw_vida(vidaf,self.dinero)
                 ls_enemigos.update()
                 ls_balas.update()
                 ls_arrastrable.update()
