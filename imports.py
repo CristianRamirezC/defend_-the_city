@@ -278,6 +278,8 @@ class Soldado1(pygame.sprite.Sprite):
         self.vida = 50
         self.fire_rate=0
         self.control_vida = 0
+        self.tipo = "soldado_1"
+        self.precio = 50
 
     def update_rect(self,x,y):
         self.rect = self.image.get_rect()
@@ -327,6 +329,8 @@ class Soldado2(pygame.sprite.Sprite):
         self.vida = 20
         self.fire_rate=0
         self.control_vida = 0
+        self.tipo = "soldado_2"
+        self.precio = 200
 
     def update_rect(self,x,y):
         self.rect = self.image.get_rect()
@@ -376,6 +380,8 @@ class Soldado3(pygame.sprite.Sprite):
         self.vida = 200
         self.fire_rate=0
         self.control_vida = 0
+        self.tipo = "soldado_3"
+        self.precio = 150
 
     def update_rect(self,x,y):
         self.rect = self.image.get_rect()
@@ -434,34 +440,51 @@ class Juego:
         ls_arrastrable.add(m)
         m=Soldado3(40*2,ALTO)
         ls_arrastrable.add(m)
+
     def draw_vida(self, vida, dinero):
         heart_c = pygame.image.load("data/images/hud_heartFull.png").convert_alpha()
         hear_empty = pygame.image.load("data/images/hud_heartEmpty.png").convert_alpha()
         heard_m = pygame.image.load("data/images/hud_heartHalf.png").convert_alpha()
         tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 10)
+        vida_text = tipo2.render("Vida: " , 1 , (255,0,0))
+        dinero_text = tipo2.render("Dinero: $ " + str(dinero) , 1 , (255,0,0))
         if(vida>0) and (vida < 33):
-            vida_text = tipo2.render("Vida: " , 1 , (255,0,0))
             sub.blit(vida_text,[400,5])
             sub.blit(heart_c, [400, 30])
             sub.blit(hear_empty, [440, 30])
             sub.blit(hear_empty, [480, 30])
-        elif (vida >= 33) and (vida < 66):
-            vida_text = tipo2.render("Vida: " , 1 , (255,0,0))
-            sub.blit(vida_text,[400,5])
-            sub.blit(heart_c, [400, 30])
-            sub.blit(heart_c, [440, 30])
-            sub.blit(hear_empty, [480, 30])
+            sub.blit(dinero_text,[550,30])
 
-        elif (vida >= 66) and (vida <= 100):
-            vida_text = tipo2.render("Vida: " , 1 , (255,0,0))
-            sub.blit(vida_text,[400,5])
-            sub.blit(heart_c, [400, 30])
-            sub.blit(heart_c, [440, 30])
-            sub.blit(heart_c, [480, 30])
+        else:
+            if (vida >= 33) and (vida < 66):
+                sub.blit(vida_text,[400,5])
+                sub.blit(heart_c, [400, 30])
+                sub.blit(heart_c, [440, 30])
+                sub.blit(hear_empty, [480, 30])
+                sub.blit(dinero_text,[550,30])
+            else:
+                if(vida >= 66) and (vida <= 100):
+                    sub.blit(vida_text,[400,5])
+                    sub.blit(heart_c, [400, 30])
+                    sub.blit(heart_c, [440, 30])
+                    sub.blit(heart_c, [480, 30])
+                    sub.blit(dinero_text,[550,30])
+
+    def texto(self,texto, imagen):
+        tipo2 = pygame.font.Font("data/fonts/edunline.ttf", 50)
+        text = tipo2.render(texto , 1 , (0,0,0))
+        text_rect = text.get_rect(center=(ANCHO/2, ALTO/2))
+        image = pygame.image.load(imagen).convert_alpha()
+        image_rect = image.get_rect(center=(text_rect.right + 40, ALTO/2))
+        print "dibujado"
+        for i in range(0,5000):
+            pantalla.blit(text, text_rect)
+            pantalla.blit(image, image_rect)
+            pygame.display.flip()
 
 
     def nivel_1(self):
-        global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas, sub
+        global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas, sub, pantalla
         vidaf=100
         dinero=1000
         ALTO = 600
@@ -518,14 +541,16 @@ class Juego:
                         pantalla = pygame.display.set_mode((ANCHO, ALTO))
                         terminar=True
                         #sys.exit(0)
+                    if event.key == pygame.K_p:
+                        self.texto("Necesitas mas dinero", "data/images/money.png")
 
             P=pygame.mouse.get_pressed()
             if(P[0] == 1):
                 for bloque in ls_arrastrable:
                     if(not bloque.click):
                         if bloque.rect.collidepoint(event.pos):
-                            bloque.updatex(pantalla)
                             if(not bloque.bloqueo):
+                                bloque.updatex(pantalla)
                                 bloque.click = True
                                 self.update_status_section()
             else:
@@ -533,9 +558,9 @@ class Juego:
                     if(bloque.click):
                         bloque.updatex(pantalla)
                         if(bloque.click):
+                            ls_soldados.add(bloque)
                             bloque.click = False
                             bloque.bloqueo = True
-
 
             if(cont_waves==0):
                 cont_waves+=1
@@ -565,10 +590,10 @@ class Juego:
 
                 for bulletx in ls_balas:
                     if(checkCollision(bulletx,e)):
-                        print en.vida
                         e.vida-=random.randrange(10,15)
                         ls_balas.remove(bulletx)
-                if(en.rect.x <= 0):
+                if(e.rect.x <= 0):
+                    ls_enemigos.remove(e)
                     vidaf-=30
 
 
@@ -576,7 +601,7 @@ class Juego:
                 if(bloque.click):
                     bloque.updatex(pantalla)
                 if(bloque.vida <= 0):
-                    ls_arrastrable.remove(ele)
+                    ls_arrastrable.remove(bloque)
 
             if(not muerto):
                 tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 10)
@@ -596,5 +621,5 @@ class Juego:
                 ls_enemigos.draw(pantalla)
             else:
                 pantalla.blit(picture, rect)
-                pantalla.blit(teclas1, [ANCHO/2-220,ALTO/2+300])
+                sub.blit(teclas1, [ANCHO/2-220,20])
             pygame.display.flip()
