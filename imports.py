@@ -244,10 +244,31 @@ class Boton(pygame.sprite.Sprite):
 		self.rect.x = xi
 		self.rect.y = yi
 
+
+class Bullet(pygame.sprite.Sprite): #Hereda de la clase sprite
+
+    def __init__(self, img_name, x,y, direccion): #img para cargar, y su padre(de donde debe salir la bala)
+    	pygame.sprite.Sprite.__init__(self)
+    	self.image = pygame.image.load(img_name).convert_alpha()
+    	self.rect = self.image.get_rect()
+    	self.rect.x = x
+    	self.rect.y = y
+        self.speed = 3
+        self.direccion = "derecha"
+    def update(self):
+            if(self.direccion == "derecha"): #derecha
+                self.rect.x += self.speed
+            if(self.direccion == "izquierda"):#izquierda
+                self.rect.x -= self.speed
+            if(self.direccion == "arriba"):#arriba
+                self.rect.y -= self.speed
+            if(self.direccion == "abajo"):#abajo
+                self.rect.y += self.speed
+
 class Soldado1(pygame.sprite.Sprite):
     def __init__(self, x,y):
         pygame.sprite.Sprite.__init__(self)
-        matrizimg = cargar_fondo("data/images/soldados.png", 30,32)
+        matrizimg = cargar_fondo("data/images/soldados.png", 32,32)
         self.activado=False
         self.image=matrizimg[0][2]
         self.click=False
@@ -256,6 +277,7 @@ class Soldado1(pygame.sprite.Sprite):
         self.rect.x=x
         self.rect.y=y
         self.vida = 50
+        self.fire_rate=0
         self.control_vida = 0
 
     def update_rect(self,x,y):
@@ -270,7 +292,8 @@ class Soldado1(pygame.sprite.Sprite):
     def update(self):
         for e in ls_enemigos:
             if(checkCollision(self,e)):
-                e.rect.left = self.rect.right-1
+                if(self.bloqueo):
+                    e.rect.left = self.rect.right-1
                 #e.rect.x += 1
                 if(self.control_vida == 0):
                     self.control_vida+=1
@@ -280,6 +303,114 @@ class Soldado1(pygame.sprite.Sprite):
                         self.control_vida=0
                     else:
                         self.control_vida+=1
+        if(self.fire_rate==0):
+            if(self.bloqueo and self.fire_rate==0):
+                self.fire_rate+=1
+                b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
+                ls_balas.add(b)
+        else:
+            if(self.fire_rate > 200):
+                self.fire_rate=0
+            else:
+                self.fire_rate+=1
+
+class Soldado2(pygame.sprite.Sprite):
+    def __init__(self, x,y):
+        pygame.sprite.Sprite.__init__(self)
+        matrizimg = cargar_fondo("data/images/soldados.png", 32,32)
+        self.activado=False
+        self.image=matrizimg[3][6]
+        self.click=False
+        self.bloqueo=False
+        self.rect = self.image.get_rect()
+        self.rect.x=x
+        self.rect.y=y
+        self.vida = 20
+        self.fire_rate=0
+        self.control_vida = 0
+
+    def update_rect(self,x,y):
+        self.rect = self.image.get_rect()
+        self.rect.x= x
+        self.rect.y= y
+    def updatex(self,surface):
+		if self.click :
+			self.rect.center = pygame.mouse.get_pos()
+		surface.blit(self.image,self.rect)
+
+    def update(self):
+        for e in ls_enemigos:
+            if(checkCollision(self,e)):
+                if(self.bloqueo):
+                    e.rect.left = self.rect.right-1
+                #e.rect.x += 1
+                if(self.control_vida == 0):
+                    self.control_vida+=1
+                    self.vida -= 5
+                else:
+                    if(self.control_vida > 500):
+                        self.control_vida=0
+                    else:
+                        self.control_vida+=1
+        if(self.fire_rate==0):
+            if(self.bloqueo and self.fire_rate==0):
+                self.fire_rate+=1
+                b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
+                ls_balas.add(b)
+        else:
+            if(self.fire_rate > 60):
+                self.fire_rate=0
+            else:
+                self.fire_rate+=1
+
+class Soldado3(pygame.sprite.Sprite):
+    def __init__(self, x,y):
+        pygame.sprite.Sprite.__init__(self)
+        matrizimg = cargar_fondo("data/images/soldados.png", 32,32)
+        self.activado=False
+        self.image=matrizimg[3][2]
+        self.click=False
+        self.bloqueo=False
+        self.rect = self.image.get_rect()
+        self.rect.x=x
+        self.rect.y=y
+        self.vida = 200
+        self.fire_rate=0
+        self.control_vida = 0
+
+    def update_rect(self,x,y):
+        self.rect = self.image.get_rect()
+        self.rect.x= x
+        self.rect.y= y
+    def updatex(self,surface):
+		if self.click :
+			self.rect.center = pygame.mouse.get_pos()
+		surface.blit(self.image,self.rect)
+
+    def update(self):
+        for e in ls_enemigos:
+            if(checkCollision(self,e)):
+                if(self.bloqueo):
+                    e.rect.left = self.rect.right-1
+                #e.rect.x += 1
+                if(self.control_vida == 0):
+                    self.control_vida+=1
+                    self.vida -= 5
+                else:
+                    if(self.control_vida > 500):
+                        self.control_vida=0
+                    else:
+                        self.control_vida+=1
+        if(self.fire_rate==0):
+            if(self.bloqueo and self.fire_rate==0):
+                self.fire_rate+=1
+                b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
+                ls_balas.add(b)
+        else:
+            if(self.fire_rate > 800):
+                self.fire_rate=0
+            else:
+                self.fire_rate+=1
 
 
 
@@ -297,31 +428,14 @@ class Juego:
         if(self.nivel==1):
             self.nivel_1()
 
-    def waves(self, zombies, waves, ls_enemigos):
-        ls_valid_en = []
-        for i in xrange(15):
-            ls_valid_en.append(40*i)
-
-        tipos = [(0,3,0),(3,6,0), (6,9,0)]
-        velocidad =[200, 180, 400]
-        vida= [100, 130, 400]
-
-        for zombie in range(zombies):
-            index=random.randrange(0,len(tipos))
-            en=Enemigo(ANCHO, ls_valid_en[random.randrange(14)], tipos[index][0],tipos[index][1],tipos[index][2])
-            en.vida=vida[index]
-            en.velocidad=velocidad[index]
-            ls_enemigos.add(en)
-        return ls_enemigos
-
 
     def nivel_1(self):
-        global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable
+        global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas
         ALTO = 600
         ANCHO = 800
         pygame.init()
         reloj = pygame.time.Clock()
-        pantalla = pygame.display.set_mode((ANCHO, ALTO+50))
+        pantalla = pygame.display.set_mode((ANCHO, ALTO+80))
         pygame.display.set_caption('%s  %.2f' % ("Defend the city - LVL 1       FPS:", reloj.get_fps()), 'Spine Runtime')
         pygame.display.set_icon(pygame.image.load("data/images/ico.png").convert_alpha())
         pantalla.fill((255,0,0))
@@ -335,15 +449,9 @@ class Juego:
         ls_todos=pygame.sprite.Group()
         ls_enemigos=pygame.sprite.Group()
         ls_arrastrable=pygame.sprite.Group()
+        ls_balas = pygame.sprite.Group()
 
         m = dibujarmapa("mapa.404","nivel1", 40,40)
-
-        for i in xrange(20):
-            m = Soldado1(40*i,ALTO)
-            #m.update_rect(m.rect.x,m.rect.y)
-            ls_arrastrable.add(m)
-
-        ls_enemigos = self.waves(10, 1, ls_enemigos)
 
         """pos = ls_valid_en[14]
         en = Enemigo(pos[0],pos[1], 0,2)
@@ -352,6 +460,7 @@ class Juego:
         ls_todos.draw(self.surface)
         pygame.display.flip()
         presionado = False
+        cont_waves=0
         while 1:
             for event in pygame.event.get():
                 if event.type==pygame.KEYDOWN:
@@ -372,18 +481,57 @@ class Juego:
                         bloque.click = False
                         bloque.bloqueo = True
 
+            if(cont_waves==0):
+                cont_waves+=1
+                ls_valid_en = []
+                for i in xrange(15):
+                    ls_valid_en.append(40*i)
+
+                tipos = [(0,3,0),(3,6,0), (6,9,0)]
+                velocidad =[200, 180, 400]
+                vida= [100, 130, 400]
+
+                for zombie in range(10):
+                    index=random.randrange(0,len(tipos))
+                    en=Enemigo(ANCHO, ls_valid_en[random.randrange(14)], tipos[index][0],tipos[index][1],tipos[index][2])
+                    en.vida=vida[index]
+                    en.velocidad=velocidad[index]
+                    ls_enemigos.add(en)
+            else:
+                if(cont_waves > 100000):
+                    cont_waves=0
+                else:
+                    cont_waves+=1
+            print ls_enemigos
+            for e in ls_enemigos:
+                if(e.vida <= 0):
+                    ls_enemigos.remove(e)
+                for bulletx in ls_balas:
+                    if(checkCollision(bulletx,e)):
+                        e.vida-=random.randrange(10,30)
+
             for ele in ls_arrastrable:
-                if(ele.vida < 0):
+                if(ele.vida <= 0):
                     ls_arrastrable.remove(ele)
 
             for bloque in ls_arrastrable:
                 if(bloque.click):
                     bloque.updatex(pantalla)
+
+            m = Soldado1(40*0,ALTO)
+            ls_arrastrable.add(m)
+            m=Soldado2(40*1,ALTO)
+            ls_arrastrable.add(m)
+            m=Soldado3(40*2,ALTO)
+            ls_arrastrable.add(m)
+
             pantalla.fill((255,0,0))
             sub.fill((255,255,255))
             ls_enemigos.update()
+            ls_balas.update()
             ls_arrastrable.update()
             ls_todos.draw(pantalla)
             ls_arrastrable.draw(pantalla)
+            ls_balas.draw(pantalla)
             ls_enemigos.draw(pantalla)
             pygame.display.flip()
