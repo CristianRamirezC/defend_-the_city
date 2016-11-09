@@ -434,19 +434,18 @@ class Juego:
         ls_arrastrable.add(m)
         m=Soldado3(40*2,ALTO)
         ls_arrastrable.add(m)
-    def draw_vida(self, vida):
+    def draw_vida(self, vida, dinero):
         heart_c = pygame.image.load("data/images/hud_heartFull.png").convert_alpha()
         hear_empty = pygame.image.load("data/images/hud_heartEmpty.png").convert_alpha()
         heard_m = pygame.image.load("data/images/hud_heartHalf.png").convert_alpha()
+        tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 10)
         if(vida>0) and (vida < 33):
-            tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 10)
             vida_text = tipo2.render("Vida: " , 1 , (255,0,0))
             sub.blit(vida_text,[400,5])
             sub.blit(heart_c, [400, 30])
             sub.blit(hear_empty, [440, 30])
             sub.blit(hear_empty, [480, 30])
         elif (vida >= 33) and (vida < 66):
-            tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 10)
             vida_text = tipo2.render("Vida: " , 1 , (255,0,0))
             sub.blit(vida_text,[400,5])
             sub.blit(heart_c, [400, 30])
@@ -454,7 +453,6 @@ class Juego:
             sub.blit(hear_empty, [480, 30])
 
         elif (vida >= 66) and (vida <= 100):
-            tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 10)
             vida_text = tipo2.render("Vida: " , 1 , (255,0,0))
             sub.blit(vida_text,[400,5])
             sub.blit(heart_c, [400, 30])
@@ -465,6 +463,7 @@ class Juego:
     def nivel_1(self):
         global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas, sub
         vidaf=100
+        dinero=1000
         ALTO = 600
         ANCHO = 800
         pygame.init()
@@ -586,7 +585,7 @@ class Juego:
                 pantalla.fill((255,0,0))
                 sub.fill((0,0,0))
                 sub.blit(costos,[0,41])
-                self.draw_vida(vidaf)
+                self.draw_vida(vidaf,dinero)
                 ls_enemigos.update()
                 ls_balas.update()
                 ls_arrastrable.update()
