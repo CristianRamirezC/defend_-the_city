@@ -309,7 +309,7 @@ class Soldado1(pygame.sprite.Sprite):
                 b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
                 ls_balas.add(b)
         else:
-            if(self.fire_rate > 200):
+            if(self.fire_rate > 700):
                 self.fire_rate=0
             else:
                 self.fire_rate+=1
@@ -358,7 +358,7 @@ class Soldado2(pygame.sprite.Sprite):
                 b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
                 ls_balas.add(b)
         else:
-            if(self.fire_rate > 60):
+            if(self.fire_rate > 500):
                 self.fire_rate=0
             else:
                 self.fire_rate+=1
@@ -407,7 +407,7 @@ class Soldado3(pygame.sprite.Sprite):
                 b = Bullet("data/images/bala.png", self.rect.x, self.rect.y, "derecha")
                 ls_balas.add(b)
         else:
-            if(self.fire_rate > 800):
+            if(self.fire_rate > 1000):
                 self.fire_rate=0
             else:
                 self.fire_rate+=1
@@ -453,9 +453,12 @@ class Juego:
 
         m = dibujarmapa("mapa.404","nivel1", 40,40)
 
-        """pos = ls_valid_en[14]
-        en = Enemigo(pos[0],pos[1], 0,2)
-        ls_enemigos.add(en)"""
+        m = Soldado1(40*0,ALTO)
+        ls_arrastrable.add(m)
+        m=Soldado2(40*1,ALTO)
+        ls_arrastrable.add(m)
+        m=Soldado3(40*2,ALTO)
+        ls_arrastrable.add(m)
 
         ls_todos.draw(self.surface)
         pygame.display.flip()
@@ -490,7 +493,7 @@ class Juego:
                     ls_valid_en.append(40*i)
 
                 tipos = [(0,3,0),(3,6,0), (6,9,0)]
-                velocidad =[10, 5, 20]
+                velocidad =[100, 130, 400]
                 vida= [100, 130, 400]
 
                 for zombie in range(10):
@@ -512,7 +515,7 @@ class Juego:
                 for bulletx in ls_balas:
                     if(checkCollision(bulletx,e)):
                         print en.vida
-                        e.vida-=2
+                        e.vida-=random.randrange(10,15)
                         ls_balas.remove(bulletx)
 
             for bloque in ls_arrastrable:
@@ -521,12 +524,6 @@ class Juego:
                 if(bloque.vida <= 0):
                     ls_arrastrable.remove(ele)
 
-            m = Soldado1(40*0,ALTO)
-            ls_arrastrable.add(m)
-            m=Soldado2(40*1,ALTO)
-            ls_arrastrable.add(m)
-            m=Soldado3(40*2,ALTO)
-            ls_arrastrable.add(m)
 
             pantalla.fill((255,0,0))
             sub.fill((255,255,255))
