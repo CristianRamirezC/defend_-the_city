@@ -511,11 +511,11 @@ class Juego:
         m = dibujarmapa("mapa.404","nivel1", 40,40)
 
         m = Soldado1(40*0,ALTO)
-        ls_arrastrable.add(m)
+        ls_soldados.add(m)
         m=Soldado2(40*1,ALTO)
-        ls_arrastrable.add(m)
+        ls_soldados.add(m)
         m=Soldado3(40*2,ALTO)
-        ls_arrastrable.add(m)
+        ls_soldados.add(m)
 
         ls_todos.draw(self.surface)
         pygame.display.flip()
@@ -538,16 +538,25 @@ class Juego:
             for event in pygame.event.get():
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    for bloque in ls_arrastrable:
+                    for bloque in ls_soldados:
                         if(not bloque.click):
                             if bloque.rect.collidepoint(event.pos):
-                                if(not bloque.bloqueo):
-                                    bloque.updatex(pantalla)
-                                    bloque.click = True
-                                    self.update_status_section()
+                                if(bloque.tipo == "soldado_1"):
+                                    m = Soldado1(40*0,ALTO)
+                                if(bloque.tipo == "soldado_2"):
+                                    m=Soldado2(40*1,ALTO)
+                                if(bloque.tipo == "soldado_3"):
+                                    m=Soldado3(40*2,ALTO)
+                                if(not m.bloqueo) and (m.click == False):
+                                    print "agarro"
+                                    m.updatex(pantalla)
+                                    m.click = True
+                                    ls_arrastrable.add(m)
+                                        #self.update_status_section()
+
                 elif event.type == pygame.MOUSEBUTTONUP:
                     for bloque in ls_arrastrable:
-                        if(bloque.click):
+                        if(bloque.click and bloque.bloqueo == False):
                             bloque.updatex(pantalla)
                             if(bloque.click):
                                 if(dinero < bloque.precio):
@@ -555,7 +564,6 @@ class Juego:
                                     ls_arrastrable.remove(bloque)
                                     bloque.click = False
                                 else:
-                                    ls_soldados.add(bloque)
                                     bloque.click = False
                                     bloque.bloqueo = True
                                     dinero-=bloque.precio
@@ -567,7 +575,7 @@ class Juego:
                     if event.key == pygame.K_p:
                         self.texto("Necesitas mas dinero", "data/images/money.png")
 
-            print ls_arrastrable
+            print "arr: ", ls_arrastrable, "soldado", ls_soldados
             if(cont_waves==0):
                 cont_waves+=1
                 ls_valid_en = []
