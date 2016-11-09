@@ -507,19 +507,22 @@ class Juego:
         if(self.nivel==1):
             self.nivel_1()
 
-    def draw_vida(self, vida, dinero):
+    def draw_vida(self, vida, dinero, tiempo_final):
         heart_c = pygame.image.load("data/images/hud_heartFull.png").convert_alpha()
         hear_empty = pygame.image.load("data/images/hud_heartEmpty.png").convert_alpha()
         heard_m = pygame.image.load("data/images/hud_heartHalf.png").convert_alpha()
         tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 10)
         vida_text = tipo2.render("Vida: " , 1 , (255,0,0))
         dinero_text = tipo2.render("Dinero: $ " + str(dinero) , 1 , (255,0,0))
+        reloj2 = tipo2.render(tiempo_final, True, (255,0,0))
+
         if(vida>0) and (vida < 33):
             sub.blit(vida_text,[400,5])
             sub.blit(heart_c, [400, 30])
             sub.blit(hear_empty, [440, 30])
             sub.blit(hear_empty, [480, 30])
-            sub.blit(dinero_text,[550,30])
+            sub.blit(dinero_text,[550,5])
+            sub.blit(reloj2,[550,30])
 
         else:
             if (vida >= 33) and (vida < 66):
@@ -527,14 +530,16 @@ class Juego:
                 sub.blit(heart_c, [400, 30])
                 sub.blit(heart_c, [440, 30])
                 sub.blit(hear_empty, [480, 30])
-                sub.blit(dinero_text,[550,30])
+                sub.blit(dinero_text,[550,5])
+                sub.blit(reloj2,[550,30])
             else:
                 if(vida >= 66) and (vida <= 100):
                     sub.blit(vida_text,[400,5])
                     sub.blit(heart_c, [400, 30])
                     sub.blit(heart_c, [440, 30])
                     sub.blit(heart_c, [480, 30])
-                    sub.blit(dinero_text,[550,30])
+                    sub.blit(dinero_text,[550,5])
+                    sub.blit(reloj2,[550,30])
 
     def texto(self,texto, imagen):
         tipo2 = pygame.font.Font("data/fonts/edunline.ttf", 50)
@@ -595,7 +600,22 @@ class Juego:
         muerto = False
         win=False
         terminar=False
+        reloj = pygame.time.Clock()
+        tasa_cambio=60
+        con_cuadros=0
         while not terminar:
+
+            #---------tiempo en pantalla------------
+            total_segundos = con_cuadros // tasa_cambio
+            minutos= total_segundos // 60
+            segundos = total_segundos % 60
+            tiempo_final = "Tiempo: {0:02}:{1:02}".format(minutos,segundos)
+            if total_segundos > 60:
+              total_segundos=0
+
+            con_cuadros+=1
+            #-----------------------------------------
+
             if(vidaf <= 0):
                 tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 20)
                 global picture
@@ -707,7 +727,7 @@ class Juego:
                 pantalla.fill((255,0,0))
                 sub.fill((0,0,0))
                 sub.blit(costos,[0,41])
-                self.draw_vida(vidaf,self.dinero)
+                self.draw_vida(vidaf,self.dinero, tiempo_final)
                 ls_enemigos.update()
                 ls_balas.update()
                 ls_animacion.update()
@@ -738,5 +758,5 @@ class Juego:
                         pantalla.blit(picture, rect)
                         sub.blit(teclasx, [ANCHO/2-220,15])
                         sub.blit(teclasy, [ANCHO/2-100,45])
-
+            reloj.tick(tasa_cambio)
             pygame.display.flip()
