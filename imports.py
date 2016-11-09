@@ -553,7 +553,7 @@ class Juego:
         global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas, sub, pantalla, ls_animacion
         vidaf=100
         nro_oleadas=0
-        per_oleada=15
+        per_oleada=20
         self.dinero=1100
         ALTO = 600
         ANCHO = 800
@@ -663,7 +663,7 @@ class Juego:
                         ls_valid_en.append(40*i)
 
                     tipos = [(0,3,0),(3,6,0), (6,9,0)]
-                    velocidad =[2, 2, 2]
+                    velocidad =[100, 130, 400]
                     vida= [100, 130, 400]
 
                     for zombie in range(per_oleada):
@@ -681,8 +681,6 @@ class Juego:
                         cont_waves+=1
             else:
                 win=True
-
-
 
             for e in ls_enemigos:
                 if(e.vida <= 0):
@@ -721,11 +719,24 @@ class Juego:
                 ls_enemigos.draw(pantalla)
                 ls_animacion.draw(pantalla)
             else:
-                if(muerto):
+                if(muerto and not win):
                     ls_todos.draw(pantalla)
                     pantalla.blit(picture, rect)
                     sub.blit(teclas1, [ANCHO/2-220,20])
                 else:
                     if(win):
-                        print "ganaste"
+                        tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 20)
+                        global picture
+                        picture = pygame.image.load("data/images/win.png")
+                        picture = pygame.transform.scale(picture, (ANCHO, ALTO+10))
+                        rect = picture.get_rect(center=(ANCHO/2, ALTO/2))
+                        muerto = True
+                        sub.fill((0,0,0))
+                        tipo.set_bold(True)
+                        teclasx = tipo2.render("Presione ESC para ir al menu" , 1 , (255,0,0))
+                        teclasy = tipo2.render("Eres el ganador" , 1 , (255,0,0))
+                        pantalla.blit(picture, rect)
+                        sub.blit(teclasx, [ANCHO/2-220,15])
+                        sub.blit(teclasy, [ANCHO/2-100,45])
+
             pygame.display.flip()
