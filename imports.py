@@ -459,11 +459,38 @@ class lab(pygame.sprite.Sprite):
         if(self.fire_rate==0):
             self.fire_rate+=1
             self.game.dinero+=25
+            ls_animacion.add(dinero_corr(self.rect.x+15,self.rect.y))
         else:
             if(self.fire_rate > 5000):
                 self.fire_rate=0
             else:
                 self.fire_rate+=1
+
+class dinero_corr(pygame.sprite.Sprite):
+    def __init__(self, x,y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image=pygame.image.load("data/images/money.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (20, 20))
+        self.rect = self.image.get_rect()
+        self.rect.x=x
+        self.rect.y=y
+        self.time = 0
+        self.numero=0
+    def update(self):
+        if(self.numero <= 5):
+            if(self.time==0):
+                self.time+=1
+                self.numero+=1
+                self.rect.y -= 5
+            else:
+                if(self.time > 100):
+                    self.time=0
+                else:
+                    self.time+=1
+            print self.numero
+        else:
+            ls_animacion.remove(self)
+
 
 
 class Juego:
@@ -523,7 +550,7 @@ class Juego:
 
 
     def nivel_1(self):
-        global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas, sub, pantalla
+        global ls_todos, ls_valid, ANCHO, ALTO, ls_enemigos, ls_arrastrable, ls_balas, sub, pantalla, ls_animacion
         vidaf=100
         self.dinero=1000
         ALTO = 600
@@ -546,6 +573,7 @@ class Juego:
         ls_arrastrable=pygame.sprite.Group()
         ls_balas = pygame.sprite.Group()
         ls_soldados = pygame.sprite.Group()
+        ls_animacion = pygame.sprite.Group()
 
         m = dibujarmapa("mapa.404","nivel1", 40,40)
 
@@ -675,12 +703,14 @@ class Juego:
                 self.draw_vida(vidaf,self.dinero)
                 ls_enemigos.update()
                 ls_balas.update()
+                ls_animacion.update()
                 ls_arrastrable.update()
                 ls_todos.draw(pantalla)
                 ls_arrastrable.draw(pantalla)
                 ls_soldados.draw(pantalla)
                 ls_balas.draw(pantalla)
                 ls_enemigos.draw(pantalla)
+                ls_animacion.draw(pantalla)
             else:
                 pantalla.blit(picture, rect)
                 sub.blit(teclas1, [ANCHO/2-220,20])
