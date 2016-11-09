@@ -616,7 +616,7 @@ class Juego:
             con_cuadros+=1
             #-----------------------------------------
 
-            if(vidaf <= 0):
+            if(vidaf <= 0 or minutos > 15):
                 tipo2 = pygame.font.Font("data/fonts/Pixeled.ttf", 20)
                 global picture
                 picture = pygame.image.load("data/images/gameover.png")
@@ -674,7 +674,7 @@ class Juego:
                     if event.key == pygame.K_p:
                         self.texto("Necesitas mas dinero", "data/images/money.png")
 
-            print "arr: ", ls_arrastrable, "soldado", ls_soldados, "enemigos: ", ls_enemigos, "nro_ol ", nro_oleadas
+            #print "arr: ", ls_arrastrable, "soldado", ls_soldados, "enemigos: ", ls_enemigos, "nro_ol ", nro_oleadas
             if(nro_oleadas <= 5):
                 if(cont_waves==0):
                     cont_waves+=1
