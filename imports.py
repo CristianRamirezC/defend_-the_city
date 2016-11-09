@@ -677,6 +677,7 @@ class Juego:
             #print "arr: ", ls_arrastrable, "soldado", ls_soldados, "enemigos: ", ls_enemigos, "nro_ol ", nro_oleadas
             if(nro_oleadas <= 5):
                 if(cont_waves==0):
+                    self.texto("Oleadad " + str(nro_oleadas), "data/images/war.png")
                     cont_waves+=1
                     ls_valid_en = []
                     for i in xrange(15):
@@ -700,7 +701,8 @@ class Juego:
                     else:
                         cont_waves+=1
             else:
-                win=True
+                if(len(ls_enemigos) ==0):
+                    win=True
 
             for e in ls_enemigos:
                 if(e.vida <= 0):
@@ -710,6 +712,10 @@ class Juego:
                     if(checkCollision(bulletx,e)):
                         e.vida-=random.randrange(10,15)
                         ls_balas.remove(bulletx)
+
+                    if(bulletx.rect.x > ANCHO-5):
+                        ls_balas.remove(bulletx)
+
                 if(e.rect.x <= 0):
                     ls_enemigos.remove(e)
                     vidaf-=30

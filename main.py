@@ -13,7 +13,7 @@ def start():
     pantalla.fill((51,51,51))
     m =Menu(['Iniciar juego','Controles', 'Salir'], pantalla, (ANCHO/2-150,ALTO/2-50))
     m.tam_font = 68
-    m.intro=False
+    m.intro=True
     m.draw_menu()
     game = Juego(1,pantalla)
     pygame.display.update()
